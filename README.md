@@ -1,4 +1,4 @@
-##IRC BOT
+## IRC BOT
 
 this is a simple irc bot written in c.
 it was written to test the irc protocol, and it can be used as a base to make a more complex bot.
@@ -14,8 +14,9 @@ channel=#yourchannel
 server=irc.quakenet.org
 port=6668
 ```
+you can also view the full raw log file (bot.log) which contains every exchange made between the bot and the server
 
+## TODO
 
-##TODO
 catch sigterm to free the memory and close socket properly.
 eventually make it portable on windows by using windows socket equivalent ...
