@@ -1,7 +1,8 @@
 #include "handler.h"
 
-void handler_hello(Config *c, char *channel, char *str)
+void handler_hello(Config *c, message *msg)
 {
-  (void) str;
-  command_msg(c, channel, ":hello world");
+  char *str  = ":hello world";
+  msg->msg = str;
+  command_msg(c, msg);
 }

@@ -10,9 +10,17 @@
 
 #define BUFF_SIZE 1024
 
+
+typedef struct message {
+  char *user;
+  char *command;
+  char *msg;
+  char *channel;
+} message;
+
 typedef struct command {
   char *name;
-  void (* command)(Config*, char*);
+  void (* command)(Config*, message*);
 } command;
 
 void start_bot(Config *c);
@@ -20,5 +28,5 @@ void parse_buffer(Config *c, char *buffer);
 void join_server(Config *c);
 void loop(Config *c);
 void clean(Config *c);
-void on_privmsg(Config *c, char *buffer);
+void on_privmsg(Config *c, message *msg);
 #endif

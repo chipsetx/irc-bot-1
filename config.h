@@ -15,7 +15,7 @@
 #define DEFAULT_SERVER "irc.quakenet.org"
 #define DEFAULT_PORT 6667
 #define DEFAULT_LOG_FILE "bot.log"
-#define DEFAULT_CHANNEL "#test"
+#define DEFAULT_CHANNEL "#test10"
 
 typedef struct Config {
   

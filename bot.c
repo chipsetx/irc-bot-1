@@ -21,7 +21,7 @@ void clean(Config *c) {
 }
 
 void join_server(Config *c)
-{   
+{
   command_pass(c);
   command_nick(c, NULL);
   command_user(c);
@@ -56,7 +56,9 @@ void loop(Config *c)
 	    if(n == 0)
 	      {
 		printf("Server disconnected !\n");
-		break;
+		free(buffer);
+		clean(c);
+		exit(1);
 	      }
 
 	    while ((line = strtok_r(buffer, "\n", &save)) != NULL) {
@@ -73,13 +75,16 @@ void loop(Config *c)
 	  }
 	}
     }
+  free(buffer);
 }
 
 void parse_buffer(Config *c, char *buffer)
 {
   char *token;
   char *save;
+  char *user;
   int i;
+  message msg;
   
   command commands[] = {
     {"PING", &command_ping},
@@ -92,30 +97,41 @@ void parse_buffer(Config *c, char *buffer)
     return;
   }
   if (token[0] == ':') {
+    msg.user = strtok_r(token++, "!", &user);
     token = strtok_r(NULL, " ", &save);
+    if (token == NULL) {
+      return;
+    } 
   }
+
+  msg.command = token;
+  msg.msg = strtok_r(NULL, "", &save);
   
   for (i = 0; commands[i].name != 0; i++) {
     if (strcmp(token, commands[i].name) == 0) {
-      commands[i].command(c, strtok_r(NULL, "", &save));      
+      commands[i].command(c, &msg);      
     } 
   }
 }
 
-void on_privmsg(Config *c, char *buffer) {
+void on_privmsg(Config *c, message *msg) {
   char *token;
   char *ptr;
   char *channel;
+  char buffer[BUFF_SIZE];
   int i;
   
   handler handlers[] = {
     {"hello", &handler_hello},
     {0, 0}
   };
+
+  strcpy(buffer, msg->msg);
   channel = strtok_r(buffer, " ", &ptr);
   if (channel == NULL) {
     return;
   }
+  msg->channel = channel;
   if (strcmp(channel, c->channel) != 0 && strcmp(channel, c->name) != 0) {
     return;
   }
@@ -129,7 +145,8 @@ void on_privmsg(Config *c, char *buffer) {
     token++;
     for (i = 0; handlers[i].name != 0; i++) {
       if (strncmp(token, handlers[i].name, strlen(handlers[i].name)) == 0) {
-	handlers[i].handler(c, channel, strtok_r(NULL, "", &ptr));      
+	msg->msg = strtok_r(NULL, "", &ptr);
+	handlers[i].handler(c, msg);      
       } 
     }
     

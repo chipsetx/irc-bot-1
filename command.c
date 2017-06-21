@@ -12,9 +12,9 @@ void command_nick(Config *c, char *nick){
   
 }
 
-void command_ping(Config *c, char *pong) {
+void command_ping(Config *c, message *msg) {
   write_server(c, "PONG ");
-  write_server(c, pong);
+  write_server(c, msg->msg);
   write_server(c, "\n");
   command_join(c);
 }
@@ -48,10 +48,10 @@ void command_join(Config *c) {
   write_server(c, "\n");
 }
 
-void command_msg(Config *c, char *channel, char *str) {
+void command_msg(Config *c, message *msg) {
   write_server(c, "PRIVMSG ");
-  write_server(c, channel);
+  write_server(c, msg->channel);
   write_server(c, " ");
-  write_server(c, str);
+  write_server(c, msg->msg);
   write_server(c, "\n");
 }
